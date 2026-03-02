@@ -708,6 +708,11 @@ public class ESPDevice {
     }
 
     public void initSession(final ResponseListener listener) {
+        if (listener == null) {
+            Log.e(TAG, "initSession listener is null. Session init aborted.");
+            return;
+        }
+
         ensureVersionInfoForSession(new ResponseListener() {
 
             @Override
@@ -775,7 +780,11 @@ public class ESPDevice {
         } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG, "Unexpected error while parsing version info.", e);
-            listener.onFailure(new RuntimeException("Failed to parse device version info.", e));
+            if (listener != null) {
+                listener.onFailure(new RuntimeException("Failed to parse device version info.", e));
+            } else {
+                Log.e(TAG, "Failed to notify listener after parsing error because listener is null.");
+            }
             return;
         }
 
@@ -804,17 +813,29 @@ public class ESPDevice {
 
                 @Override
                 public void OnSessionEstablished() {
-                    listener.onSuccess(null);
+                    if (listener != null) {
+                        listener.onSuccess(null);
+                    } else {
+                        Log.e(TAG, "Failed to notify session established because listener is null.");
+                    }
                 }
 
                 @Override
                 public void OnSessionEstablishFailed(Exception e) {
-                    listener.onFailure(e);
+                    if (listener != null) {
+                        listener.onFailure(e);
+                    } else {
+                        Log.e(TAG, "Failed to notify session establish failure because listener is null.", e);
+                    }
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            listener.onFailure(e);
+            if (listener != null) {
+                listener.onFailure(e);
+            } else {
+                Log.e(TAG, "Failed to notify listener after session init exception because listener is null.", e);
+            }
         }
     }
 
@@ -886,17 +907,22 @@ public class ESPDevice {
             Log.e(TAG, "Unexpected error while caching version info.", e);
         }
 
-        deviceCapabilities = parsedCapabilities;
         if (transport instanceof BLETransport) {
             BLETransport bleTransport = (BLETransport) transport;
             bleTransport.versionInfo = data;
             bleTransport.deviceCapabilities.clear();
             bleTransport.deviceCapabilities.addAll(parsedCapabilities);
+            deviceCapabilities = bleTransport.deviceCapabilities;
+        } else {
+            deviceCapabilities = parsedCapabilities;
         }
     }
 
     private void clearCachedVersionInfoAndCapabilities() {
         versionInfo = null;
+        if (deviceCapabilities == null) {
+            deviceCapabilities = new ArrayList<>();
+        }
         deviceCapabilities.clear();
         secPatchVersion = 0;
 
