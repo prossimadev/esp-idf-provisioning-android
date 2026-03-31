@@ -1254,7 +1254,7 @@ public class ESPDevice {
                     if (provisionListener != null) {
                         provisionListener.deviceProvisioningSuccess();
                     }
-                    Log.e(TAGPROX, "pollForThreadConnectionStatus onSuccess Attached");
+                    Log.e(TAGPROX, "pollForThreadConnectionStatus - onSuccess - Attached");
                     //disableOnlyWifiNetwork();
 
                 } else if (threadNetworkState == NetworkConstants.ThreadNetworkState.Dettached) {
