@@ -73,6 +73,7 @@ import espressif.NetworkScan;
 public class ESPDevice {
 
     private static final String TAG = "ESP:" + ESPDevice.class.getSimpleName();
+    private static final String TAGPROX = "PROX ESP:" + ESPDevice.class.getSimpleName();
 
     private Context context;
     private Handler handler;
@@ -1170,13 +1171,13 @@ public class ESPDevice {
 
     private void pollForWifiConnectionStatus() {
 
-        Log.e(TAG, "pollForWifiConnectionStatus");
+        Log.e(TAGPROX, "pollForWifiConnectionStatus");
         byte[] message = MessengeHelper.prepareGetWiFiConfigStatusMsg();
         session.sendDataToDevice(ESPConstants.HANDLER_PROV_CONFIG, message, new ResponseListener() {
 
             @Override
             public void onSuccess(byte[] returnData) {
-                Log.e(TAG, "pollForWifiConnectionStatus onSuccess");
+                Log.e(TAGPROX, "pollForWifiConnectionStatus onSuccess");
                 Object[] statuses = processProvisioningStatusResponse(returnData);
                 NetworkConstants.WifiStationState wifiStationState = (NetworkConstants.WifiStationState) statuses[0];
                 NetworkConstants.WifiConnectFailedReason failedReason = (NetworkConstants.WifiConnectFailedReason) statuses[1];
@@ -1187,7 +1188,7 @@ public class ESPDevice {
                     if (provisionListener != null) {
                         provisionListener.deviceProvisioningSuccess();
                     }
-                    Log.e(TAG, "pollForWifiConnectionStatus onSuccess Connected");
+                    Log.e(TAGPROX, "pollForWifiConnectionStatus onSuccess Connected");
                     //session = null;
                     //disableOnlyWifiNetwork();
 
@@ -1236,13 +1237,13 @@ public class ESPDevice {
     }
 
     private void pollForThreadConnectionStatus() {
-        Log.e(TAG, "pollForThreadConnectionStatus");
+        Log.e(TAGPROX, "pollForThreadConnectionStatus");
         byte[] message = MessengeHelper.prepareGetThreadConfigStatusMsg();
         session.sendDataToDevice(ESPConstants.HANDLER_PROV_CONFIG, message, new ResponseListener() {
 
             @Override
             public void onSuccess(byte[] returnData) {
-                Log.e(TAG, "pollForThreadConnectionStatus onSuccess");
+                Log.e(TAGPROX, "pollForThreadConnectionStatus onSuccess");
                 Object[] statuses = processThreadProvisioningStatusResponse(returnData);
                 NetworkConstants.ThreadNetworkState threadNetworkState = (NetworkConstants.ThreadNetworkState) statuses[0];
                 NetworkConstants.ThreadAttachFailedReason failedReason = (NetworkConstants.ThreadAttachFailedReason) statuses[1];
@@ -1253,7 +1254,7 @@ public class ESPDevice {
                     if (provisionListener != null) {
                         provisionListener.deviceProvisioningSuccess();
                     }
-                    Log.e(TAG, "pollForThreadConnectionStatus onSuccess Attached");
+                    Log.e(TAGPROX, "pollForThreadConnectionStatus onSuccess Attached");
                     //disableOnlyWifiNetwork();
 
                 } else if (threadNetworkState == NetworkConstants.ThreadNetworkState.Dettached) {
