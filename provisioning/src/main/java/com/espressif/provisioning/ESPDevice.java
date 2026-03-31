@@ -1251,7 +1251,7 @@ public class ESPDevice {
                     if (provisionListener != null) {
                         provisionListener.deviceProvisioningSuccess();
                     }
-                    disableOnlyWifiNetwork();
+                    //disableOnlyWifiNetwork();
 
                 } else if (threadNetworkState == NetworkConstants.ThreadNetworkState.Dettached) {
 
